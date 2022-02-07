@@ -1,0 +1,298 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:holding_gesture/holding_gesture.dart';
+import 'package:video_player/video_player.dart';
+import 'package:web_socket_channel/io.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: WebSocketLed(),
+    );
+  }
+}
+
+//apply this class on home: attribute at MaterialApp()
+class WebSocketLed extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _WebSocketLed();
+  }
+}
+
+class _WebSocketLed extends State<WebSocketLed> {
+  VideoPlayerController _controller;
+  bool ledstatus; //boolean value to track LED status, if its ON or OFF
+  IOWebSocketChannel channel;
+  bool connected; //boolean value to track if WebSocket is connected
+  int _counter = 0;
+  String reciver;
+  void _incrementCounter() {
+    if (mounted) {
+      setState(() {
+        _counter += 1;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Pointing the video controller to our local asset.
+    _controller = VideoPlayerController.asset("assets/background_video.mp4")
+      ..initialize().then((_) {
+        // Once the video has been loaded we play the video and set looping to true.
+        _controller.play();
+        _controller.setLooping(true);
+        // Ensure the first frame is shown after the video is initialized.
+        setState(() {});
+      });
+
+    ledstatus = false; //initially leadstatus is off so its FALSE
+    connected = false; //initially connection status is "NO" so its FALSE
+
+    Future.delayed(Duration.zero, () async {
+      channelconnect(); //connect to WebSocket wth NodeMCU
+    });
+
+    super.initState();
+  }
+
+  channelconnect() {
+    //function to connect
+    try {
+      channel =
+          IOWebSocketChannel.connect("ws://192.168.0.1:81"); //channel IP : Port
+      channel.stream.listen(
+        (message) {
+          print(message);
+          reciver = message;
+          setState(() {
+            if (message == "connected") {
+              connected = true; //message is "connected" from NodeMCU
+            } else if (message == "poweron:success") {
+              ledstatus = true;
+            } else if (message == "poweroff:success") {
+              ledstatus = false;
+            }
+          });
+        },
+        onDone: () {
+          //if WebSocket is disconnected
+          print("Web socket is closed");
+          setState(() {
+            connected = false;
+          });
+        },
+        onError: (error) {
+          print(error.toString());
+        },
+      );
+    } catch (_) {
+      print("error on connecting to websocket.");
+    }
+  }
+
+  Future<void> sendcmd(String cmd) async {
+    if (connected == true) {
+      // if (ledstatus == false && cmd != "poweron" && cmd != "poweroff") {
+      //   print("Send the valid command");
+      // } else {
+      channel.sink.add(cmd); //sending Command to
+      //   }
+    } else {
+      channelconnect();
+      print("Websocket is not connected.");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          title: Text("LED - ON/OFF NodeMCU"),
+          backgroundColor: Colors.redAccent),
+      body: Stack(children: <Widget>[
+        SizedBox.expand(
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: SizedBox(
+              width: _controller.value.size.width ?? 0,
+              height: _controller.value.size.height ?? 0,
+              child: VideoPlayer(_controller),
+            ),
+          ),
+        ),
+        Column(children: [
+          Wrap(
+            direction: Axis.horizontal,
+            spacing: 8.0, // gap between adjacent chips
+            runSpacing: 4.0, // gap between lines
+            children: [
+              Container(
+                  child: connected
+                      ? FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "connected",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        )
+                      : FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "disconnected",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        )),
+              Container(
+                  child: ledstatus ? Text("LED IS: ON") : Text("LED IS: OFF")),
+              HoldDetector(
+                onHold: () {
+                  sendcmd("up");
+                },
+                holdTimeout: Duration(microseconds: 200),
+                enableHapticFeedback: true,
+                child: Container(
+                    margin: EdgeInsets.only(top: 30),
+                    child: FlatButton(
+                        //button to start scanning
+                        color: Colors.redAccent,
+                        colorBrightness: Brightness.dark,
+                        onPressed: () {
+                          sendcmd("up");
+                        },
+                        child: Text("up"))),
+              ),
+              HoldDetector(
+                onHold: () {
+                  sendcmd("down");
+                },
+                holdTimeout: Duration(microseconds: 200),
+                enableHapticFeedback: true,
+                child: Container(
+                    margin: EdgeInsets.only(top: 30),
+                    child: FlatButton(
+                        //button to start scanning
+                        color: Colors.redAccent,
+                        colorBrightness: Brightness.dark,
+                        onPressed: () {
+                          sendcmd("down");
+                        },
+                        child: Text("down"))),
+              ),
+              HoldDetector(
+                onHold: () {
+                  sendcmd("left");
+                },
+                holdTimeout: Duration(microseconds: 200),
+                enableHapticFeedback: true,
+                child: Container(
+                    margin: EdgeInsets.only(top: 30),
+                    child: FlatButton(
+                        //button to start scanning
+                        color: Colors.redAccent,
+                        colorBrightness: Brightness.dark,
+                        onPressed: () {
+                          sendcmd("left");
+                        },
+                        child: Text("left"))),
+              ),
+              HoldDetector(
+                onHold: () {
+                  sendcmd("right");
+                },
+                holdTimeout: Duration(microseconds: 200),
+                enableHapticFeedback: true,
+                child: Container(
+                    margin: EdgeInsets.only(top: 30),
+                    child: FlatButton(
+                        //button to start scanning
+                        color: Colors.redAccent,
+                        colorBrightness: Brightness.dark,
+                        onPressed: () {
+                          sendcmd("right");
+                        },
+                        child: Text("right"))),
+              ),
+              HoldDetector(
+                onHold: () {
+                  sendcmd("poweron");
+                },
+                holdTimeout: Duration(microseconds: 200),
+                enableHapticFeedback: true,
+                child: Container(
+                    margin: EdgeInsets.only(top: 30),
+                    child: FlatButton(
+                        //button to start scanning
+                        color: Colors.redAccent,
+                        colorBrightness: Brightness.dark,
+                        onPressed: () {
+                          sendcmd("poweron");
+                        },
+                        child: Text("poweron"))),
+              ),
+              if (reciver == null) Text("reciver is empty") else Text(reciver),
+
+              Positioned(
+                top: 2,
+                bottom: 1,
+                left: 1,
+                right: 2,
+                child: HoldDetector(
+                  onHold: () {
+                    sendcmd("poweroff");
+                  },
+                  holdTimeout: Duration(microseconds: 200),
+                  enableHapticFeedback: true,
+                  child: Container(
+                      margin: EdgeInsets.only(top: 30),
+                      child: FlatButton(
+                          //button to start scanning
+                          color: Colors.redAccent,
+                          colorBrightness: Brightness.dark,
+                          onPressed: () {
+                            sendcmd("poweroff");
+                          },
+                          child: Text("poweroff"))),
+                ),
+              ),
+              
+              // Expanded(
+              //   child: StreamBuilder(
+              //     stream: channel.stream,
+              //     builder: (context, snapshot) {
+              //       if (snapshot.hasData) {
+              //         return Text(snapshot.data.toString(),
+              //             style: Theme.of(context).textTheme.headline4);
+              //       } else
+              //         return Text("Error");
+              //     },
+              //   ),
+              // ),
+            ],
+          )
+        ]),
+      ]),
+    );
+  }
+
+  _customWidget({Function onHold,String title}) {
+    return HoldDetector(
+      onHold: onHold,
+      holdTimeout: Duration(microseconds: 200),
+      enableHapticFeedback: true,
+      child: Container(
+          margin: EdgeInsets.only(top: 30),
+          child: FlatButton(
+              //button to start scanning
+              color: Colors.redAccent,
+              colorBrightness: Brightness.dark,
+              onPressed: onHold,
+              child: Text("$title"))),
+    );
+  }
+}
