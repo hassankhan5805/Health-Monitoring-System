@@ -72,7 +72,7 @@ class _HomePage extends State<HomePage> {
         isMobileInternet = false;
       });
     bool a = await WiFiForIoTPlugin.isEnabled();
-    String c = wifiNetwork  ;
+    String c = wifiNetwork;
     String b = await WiFiForIoTPlugin.getSSID();
     if (!a) {
       await WiFiForIoTPlugin.setEnabled(true);
@@ -81,7 +81,8 @@ class _HomePage extends State<HomePage> {
     }
     if (isMobileInternet) {
       setState(() {
-        status = "Better to Turn off mobile internet \n and keep turn ON WiFi only";
+        status =
+            "Better to Turn off mobile internet \n and keep turn ON WiFi only";
       });
     } else if ((b != c)) {
       setState(() {
@@ -183,8 +184,8 @@ class _HomePage extends State<HomePage> {
             children: [
               Row(
                 children: [
-                  Strap(strapValue1, channel, 1),
-                  Strap(strapValue2, channel, 2),
+                  // Strap(strapValue1, channel, 1),
+                  // Strap(strapValue2, channel, 2),
                 ],
               ),
               Text(
