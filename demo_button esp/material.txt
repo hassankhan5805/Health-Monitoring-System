@@ -1,0 +1,5 @@
+
+ for circular slider
+https://stackoverflow.com/questions/63556442/how-to-make-half-circular-slider-in-flutter
+https://pub.dev/packages/sleek_circular_slider
+
