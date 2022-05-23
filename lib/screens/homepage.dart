@@ -33,14 +33,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DataSnapshot a;
   printData() async {
-    a = await _databaseReference.get();
+    a = await _databaseReference.get().then((value) {
+     {setState(() {
+      data_ready=true;
+    });}
+    });
     print(a.value);
   }
 
+  bool data_ready = false;
   @override
   void initState() {
-    createCollection();
-    printData();
+    // createCollection();
+    printData().then((r) {
+      setState(() {
+        data_ready = true;
+      });
+    });
     // getData().then((value) {
     //   try {
     //     if (a["esp_status"] == "true") {
@@ -61,14 +70,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      appBar: AppBar(title: Text("Health Monitoring System"),centerTitle: true,),
+      body: !data_ready? CircularProgressIndicator(): Center(
         child: Column(
           children: [
-            Text('Hello World'),
-            Text('Hello World'),
-            Text('Hello World'),
-            Text('Hello World'),
-            Text('Hello World'),
+
+            Text("${a.value["123"]["temperature"]}"),
+            Text( "${a.value["123"]["heart_rate"]}"),
+            Text( "${a.value["123"]["SPO2"]}"),
+            Text( "${a.value["123"]["pulse_pattern"]}"),
+            Text( "${a.value["123"]["prediction"]}"),
             ElevatedButton(
                 onPressed: () {
                   printData();
