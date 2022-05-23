@@ -33,23 +33,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DataSnapshot a;
   printData() async {
-    a = await _databaseReference.get().then((value) {
-     {setState(() {
-      data_ready=true;
-    });}
-    });
+    a = await _databaseReference.get();
     print(a.value);
+    for (int i = 0; i < 200; i++) {
+      try {
+        if (a.value != null) {
+          setState(() {
+            data_ready = true;
+          });
+          break;
+        }
+      } catch (e) {}
+    }
   }
 
   bool data_ready = false;
   @override
   void initState() {
     // createCollection();
-    printData().then((r) {
-      setState(() {
-        data_ready = true;
-      });
-    });
+    printData();
     // getData().then((value) {
     //   try {
     //     if (a["esp_status"] == "true") {
@@ -70,24 +72,33 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Health Monitoring System"),centerTitle: true,),
-      body: !data_ready? CircularProgressIndicator(): Center(
-        child: Column(
-          children: [
-
-            Text("${a.value["123"]["temperature"]}"),
-            Text( "${a.value["123"]["heart_rate"]}"),
-            Text( "${a.value["123"]["SPO2"]}"),
-            Text( "${a.value["123"]["pulse_pattern"]}"),
-            Text( "${a.value["123"]["prediction"]}"),
-            ElevatedButton(
-                onPressed: () {
-                  printData();
-                },
-                child: Text("data"))
-          ],
-        ),
+      appBar: AppBar(
+        title: Text("Health Monitoring System"),
+        centerTitle: true,
       ),
+      body: !data_ready
+          ? CircularProgressIndicator()
+          : Center(
+              child: StreamBuilder(
+                stream: _databaseReference.child("123").onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot.data.snapshot.value);
+                    return Column(
+                      children: [
+                        Text(snapshot.data.snapshot.value["temperature"]),
+                        Text(snapshot.data.snapshot.value["heart_rate"]),
+                        Text(snapshot.data.snapshot.value["SPO2"]),
+                        Text(snapshot.data.snapshot.value["pulse_pattern"]),
+                        Text(snapshot.data.snapshot.value["prediction"]),
+                      ],
+                    );
+                  } else {
+                    return Text("Loading");
+                  }
+                },
+              ),
+            ),
     );
   }
 }
