@@ -104,7 +104,7 @@ void setup()
  
      if (!mlx.begin(0x5A)) {
     Serial.println("Error connecting to MLX sensor. Check wiring.");
-    while (1);
+//    while (1);
   }
   
   

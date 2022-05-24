@@ -34,17 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
   DataSnapshot a;
   printData() async {
     a = await _databaseReference.get();
-    print(a.value);
-    for (int i = 0; i < 200; i++) {
-      try {
-        if (a.value != null) {
-          setState(() {
-            data_ready = true;
-          });
-          break;
-        }
-      } catch (e) {}
-    }
   }
 
   bool data_ready = false;
@@ -76,9 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("Health Monitoring System"),
         centerTitle: true,
       ),
-      body: !data_ready
-          ? CircularProgressIndicator()
-          : Center(
+      body:  Center(
               child: StreamBuilder(
                 stream: _databaseReference.child("123").onValue,
                 builder: (context, snapshot) {
