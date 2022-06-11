@@ -1,20 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.demo_button">
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-    <queries>
-    <intent>
-        <action android:name="android.speech.RecognitionService" />
-    </intent>
-</queries>
+    package="com.example.health_monitoring_system">
    <application
-        android:label="Novel Lamp Theory"
+        android:label="health_monitoring_system"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        android:usesCleartextTraffic="true"
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -42,6 +31,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/>
-
 </manifest>

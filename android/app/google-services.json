@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "448374018480",
+    "firebase_url": "https://health-monitoring-system-0623-default-rtdb.firebaseio.com",
     "project_id": "health-monitoring-system-0623",
     "storage_bucket": "health-monitoring-system-0623.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:448374018480:android:f3857451cd338290a08675",
+        "mobilesdk_app_id": "1:448374018480:android:14dd33451fda59c2a08675",
         "android_client_info": {
-          "package_name": "com.example.demo_button"
+          "package_name": "com.example.health_monitoring_system"
         }
       },
       "oauth_client": [
@@ -29,6 +30,13 @@
             {
               "client_id": "448374018480-e5ftkfksmvb83jcahf515sqe7k4ohcde.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "448374018480-b1fsft26dnq7kns1olgot9v7jvlc00b7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.healthMonitoringSystem"
+              }
             }
           ]
         }

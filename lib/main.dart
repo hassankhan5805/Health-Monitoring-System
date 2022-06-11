@@ -1,41 +1,37 @@
-import 'package:demo_button/screens/login.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'screens/homepage.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:health_monitoring_system/controllers/loading.dart';
+import 'package:health_monitoring_system/homepage.dart';
+import 'package:health_monitoring_system/welcome.dart';
+
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+ 
+  Get.put(LoadingController());
+
+  runApp(const CozyApp());
 }
 
-class MyApp extends StatelessWidget {
+class CozyApp extends StatelessWidget {
+  const CozyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: Size(411.4, 891.4),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context) {
-        return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Health monitoring',
-            theme: ThemeData(
-                primarySwatch: Colors.green,
-                visualDensity: VisualDensity.adaptivePlatformDensity),
-            builder: (context, widget) {
-              ScreenUtil.defaultSize;
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                child: widget,
-              );
-            },
-            home: MyHomePage());
-      },
+    return GetMaterialApp(
+      title: 'Health Monitoring',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: SplashScreen(),
+      initialRoute: '/',
     );
   }
 }
@@ -48,39 +44,72 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
-  final _prefs = SharedPreferences.getInstance();
-
-  Future<int> getStatus() async {
-    SharedPreferences prefs = await _prefs;
-    int isLoggedIn = prefs.getInt('Log');
-    return isLoggedIn;
-  }
-navigation()async{
-      await getStatus() == 2
-          ? Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) {
-              return MyHomePage();
-            }))
-          : Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) {
-              return LoginScreen();
-            }));
-    }
+  FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    navigation();
+ 
+
+    
+    Timer(const Duration(seconds: 3), () {
+      if (_auth.currentUser !=
+          null) 
+       
+        Get.offAll(MyHomePage());
+      else
+        Get.offAll(WelcomeScreen());
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final devSize = MediaQuery.of(context).size;
     return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.white,
-      body: Center(
-       
+        body: Container(
+      width: devSize.width,
+      height: devSize.height,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topLeft,
+          colors: [
+            Colors.black,
+            Colors.green,
+          ],
+        ),
       ),
-    );
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            "assets/logo.png",
+            width: MediaQuery.of(context).size.width / 2,
+          ),
+          Text(
+            'Health Monitoring',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white, fontSize: 24, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Text(
+              'Patient data is confidential and will be used only for the purpose of monitoring the patient.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+          SizedBox(
+            height: 60,
+          )
+        ],
+      ),
+    ));
   }
 }
