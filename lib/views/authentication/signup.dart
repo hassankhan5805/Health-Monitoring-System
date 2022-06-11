@@ -1,33 +1,34 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:health_monitoring_system/auth.dart';
-
+import 'package:health_monitoring_system/views/add_module.dart';
+import '../../controllers/loading.dart';
+import '../../services/auth.dart';
 import '../../utils/constant/color.dart';
-import '../controllers/loading.dart';
-import '../utils/widgets/loading.dart';
-import 'signup.dart';
+import '../../utils/widgets/loading.dart';
+import '../homepage.dart';
+import 'signin.dart';
 
-class SigninScreen extends StatefulWidget {
-  const SigninScreen({Key? key}) : super(key: key);
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({Key? key}) : super(key: key);
 
   @override
-  _SigninScreenState createState() => _SigninScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SigninScreenState extends State<SigninScreen>
+class _SignupScreenState extends State<SignupScreen>
     with SingleTickerProviderStateMixin {
   final loading = Get.find<LoadingController>();
   AnimationController? _controller;
   Animation<double>? _opacity;
   Animation<double>? _transform;
-  bool isPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   void initState() {
@@ -77,10 +78,7 @@ class _SigninScreenState extends State<SigninScreen>
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                icon: Icon(
-                  CupertinoIcons.back,
-                  size: 32,
-                )),
+                icon: Icon(CupertinoIcons.back, size: 32)),
           ),
           body: ScrollConfiguration(
             behavior: MyBehavior(),
@@ -123,7 +121,7 @@ class _SigninScreenState extends State<SigninScreen>
                             children: [
                               SizedBox(),
                               Text(
-                                'Sign In',
+                                'Sign Up',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
@@ -131,103 +129,65 @@ class _SigninScreenState extends State<SigninScreen>
                                 ),
                               ),
                               SizedBox(),
-                              // component1(Icons.account_circle_outlined,
-                              //     'User name...', false, false,(value) {
-                              //   if (value.isEmpty) {
-                              //     return 'Please enter your email';
-                              //   }
-                              //   return null;
-                              // },emailController),
-                              component1(Icons.email_outlined, 'Email...',
-                                  false, true, emailController),
-                              component1(Icons.lock_outline, 'Password...',
-                                  true, false, passwordController),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  component2(
-                                    'SIGN IN',
-                                    2.6,
-                                    () async {
-                                      FocusScope.of(context).unfocus();
-                                      if (emailController.text.isEmpty ||
-                                          passwordController.text.isEmpty)
-                                        validator("All Fields Are Required ");
-                                      else if (!isEmail(emailController.text))
-                                        validator("Email not valid");
-                                      else {
-                                        loading.isLoading(true);
-                                        FocusScope.of(context).unfocus();
-                                        await signinWithEmail(
-                                                emailController.text,
-                                                passwordController.text)
-                                            .then((value) {
-                                          if (value == null) {
-                                            loading.isLoading(false);
-                                          } else {
-                                            loading.isLoading(false);
+                              component1(Icons.account_circle_outlined,
+                                  'Full Name', false, false, _nameController),
+                              component1(Icons.email_outlined, 'Email', false,
+                                  true, _emailController),
+                              component1(Icons.lock_outline, 'Password', true,
+                                  false, _passwordController),
+                              component1(Icons.lock_outline, 'Confirm Password',
+                                  true, false, _confirmPasswordController),
+                              component2(
+                                'SIGN UP',
+                                2.6,
+                                () {
+                                  FocusScope.of(context).unfocus();
+                                  if (_nameController.text.isEmpty ||
+                                      _emailController.text.isEmpty ||
+                                      _passwordController.text.isEmpty ||
+                                      _confirmPasswordController.text.isEmpty ||
+                                      !isEmail(_emailController.text))
+                                    validator("All Fields Are Required ");
+                                  else if (_passwordController.text !=
+                                      _confirmPasswordController.text)
+                                    validator("Password Does Not Match");
+                                  else {
+                                    loading.isLoading(true);
+                                    FocusScope.of(context).unfocus();
+                                    createAccount(
+                                      "${_nameController.text}--false",
+                                      _emailController.text,
+                                      _passwordController.text,
+                                    ).then((value) {
+                                      if (value != null) {
+                                        HapticFeedback.lightImpact();
+                                        // Get.to(() => AddModule(),
+                                        //     duration:
+                                        //         Duration(milliseconds: 700),
+                                        //     transition: Transition.rightToLeft);
+                                        //Todo
+                                        Get.off(() => MyHomePage());
 
-                                            HapticFeedback.lightImpact();
-                                            // Get.offAll(() => Home(),
-                                            //     duration:
-                                            //         Duration(milliseconds: 500),
-                                            //     transition:
-                                            //         Transition.rightToLeft);
-                                          }
-                                        });
+                                        loading.isLoading(false);
+                                      } else {
+                                        loading.isLoading(false);
                                       }
-                                    },
-                                  ),
-                                  SizedBox(),
-                                ],
+                                    });
+                                  }
+                                },
                               ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Container(
-                                  width: size.width / 2.6,
-                                  alignment: Alignment.center,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text: 'Forgot password?',
-                                      style: TextStyle(color: Colors.redAccent),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          emailController.text.isEmpty
-                                              ? Get.snackbar(
-                                                  "Alert",
-                                                  "Please enter your email",
-                                                  snackPosition:
-                                                      SnackPosition.BOTTOM,
-                                                  backgroundColor:
-                                                      Colors.white70,
-                                                )
-                                              : Get.snackbar(
-                                                  "",
-                                                  "Password Reset Link Sent",
-                                                  snackPosition:
-                                                      SnackPosition.BOTTOM,
-                                                  backgroundColor:
-                                                      Colors.white70,
-                                                );
-                                        },
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              SizedBox(width: size.width / 25),
                               SizedBox(),
                               RichText(
                                 text: TextSpan(
-                                  text: 'Create a new Account',
+                                  text: 'Have Account?',
                                   style: TextStyle(
                                     color: Colors.blueAccent,
                                     fontSize: 15,
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      Get.off(() => SignupScreen(),
+                                      Get.off(() => SigninScreen(),
                                           duration: Duration(milliseconds: 500),
                                           transition: Transition.rightToLeft);
                                     },
@@ -255,6 +215,7 @@ class _SigninScreenState extends State<SigninScreen>
       "Alert",
       a!,
       snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.white70,
     );
   }
 

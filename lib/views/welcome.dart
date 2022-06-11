@@ -40,15 +40,15 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 'Welcome to',
                 style: TextStyle(
-                    fontSize: 26,
+                    fontSize: 22,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2),
               ),
               Text(
-                ' Cozy',
+                ' Health Monitoring',
                 style: TextStyle(
-                    fontSize: 26,
+                    fontSize: 24,
                     color: Colors.green.shade400,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2),
@@ -59,10 +59,7 @@ class WelcomeScreen extends StatelessWidget {
           SizedBox(
             height: 48,
           ),
-          Image.asset(
-            'assets/welcome.png',
-            width: devSize.width / 2,
-          ),
+          
           SizedBox(
             height: 24,
           ),

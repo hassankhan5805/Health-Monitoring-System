@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:health_monitoring_system/views/homepage.dart';
 import 'dart:async';
 import 'dart:io';
 
-class AddLmap extends StatefulWidget {
-  const AddLmap({Key? key}) : super(key: key);
+import 'homepage.dart';
+
+class AddModule extends StatefulWidget {
+  const AddModule({Key? key}) : super(key: key);
 
   @override
-  State<AddLmap> createState() => _AddLmapState();
+  State<AddModule> createState() => _AddModuleState();
 }
 
-class _AddLmapState extends State<AddLmap> {
+class _AddModuleState extends State<AddModule> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController wifiSSID = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -118,9 +121,9 @@ class _AddLmapState extends State<AddLmap> {
                       write("${passwordController.text}");
 
                       // Navigator.push(
-                          // context,
-                          // MaterialPageRoute(
-                              // builder: (context) => MyHomePage()));
+                      // context,
+                      // MaterialPageRoute(
+                      // builder: (context) => MyHomePage()));
                     }
                   },
                   child: Container(
@@ -152,6 +155,18 @@ class _AddLmapState extends State<AddLmap> {
         (message) {
           reciever = String.fromCharCodes(message);
           print(reciever);
+          if(reciever == "success"){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyHomePage(),
+              ),
+            );
+          }
+          else 
+          {
+            print("error");
+          }
         },
         onError: (error) {
           print("error in listening" + error.toString());

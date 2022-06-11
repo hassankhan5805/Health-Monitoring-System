@@ -1,33 +1,34 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:health_monitoring_system/views/add_module.dart';
+import 'package:health_monitoring_system/services/auth.dart';
+import 'package:health_monitoring_system/views/homepage.dart';
+import '../../controllers/loading.dart';
 import '../../utils/constant/color.dart';
-import '../auth.dart';
-import '../controllers/loading.dart';
-import '../utils/widgets/loading.dart';
-import 'signin.dart';
+import '../../utils/widgets/loading.dart';
+import 'signup.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+class SigninScreen extends StatefulWidget {
+  const SigninScreen({Key? key}) : super(key: key);
 
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  _SigninScreenState createState() => _SigninScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen>
+class _SigninScreenState extends State<SigninScreen>
     with SingleTickerProviderStateMixin {
   final loading = Get.find<LoadingController>();
   AnimationController? _controller;
   Animation<double>? _opacity;
   Animation<double>? _transform;
+  bool isPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -77,7 +78,10 @@ class _SignupScreenState extends State<SignupScreen>
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                icon: Icon(CupertinoIcons.back, size: 32)),
+                icon: Icon(
+                  CupertinoIcons.back,
+                  size: 32,
+                )),
           ),
           body: ScrollConfiguration(
             behavior: MyBehavior(),
@@ -120,7 +124,7 @@ class _SignupScreenState extends State<SignupScreen>
                             children: [
                               SizedBox(),
                               Text(
-                                'Sign Up',
+                                'Sign In',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
@@ -128,64 +132,112 @@ class _SignupScreenState extends State<SignupScreen>
                                 ),
                               ),
                               SizedBox(),
-                              component1(Icons.account_circle_outlined,
-                                  'Full Name', false, false, _nameController),
-                              component1(Icons.email_outlined, 'Email', false,
-                                  true, _emailController),
-                              component1(Icons.lock_outline, 'Password', true,
-                                  false, _passwordController),
-                              component1(Icons.lock_outline, 'Confirm Password',
-                                  true, false, _confirmPasswordController),
-                              component2(
-                                'SIGN UP',
-                                2.6,
-                                () {
-                                  FocusScope.of(context).unfocus();
-                                  if (_nameController.text.isEmpty ||
-                                      _emailController.text.isEmpty ||
-                                      _passwordController.text.isEmpty ||
-                                      _confirmPasswordController.text.isEmpty ||
-                                      !isEmail(_emailController.text))
-                                    validator("All Fields Are Required ");
-                                  else if (_passwordController.text !=
-                                      _confirmPasswordController.text)
-                                    validator("Password Does Not Match");
-                                  else {
-                                    loading.isLoading(true);
-                                    FocusScope.of(context).unfocus();
-                                    createAccount(
-                                      "${_nameController.text}--false",
-                                      _emailController.text,
-                                      _passwordController.text,
-                                    ).then((value) {
-                                      if (value != null) {
-                                        // HapticFeedback.lightImpact();
-                                        // Get.to(() => ProfessionScreen(),
-                                        //     duration:
-                                        //         Duration(milliseconds: 700),
-                                        //     transition: Transition.rightToLeft);
-                                        loading.isLoading(false);
-                                      } else {
-                                        loading.isLoading(false);
+                              component1(Icons.email_outlined, 'Email...',
+                                  false, true, emailController),
+                              component1(Icons.lock_outline, 'Password...',
+                                  true, false, passwordController),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  component2(
+                                    'SIGN IN',
+                                    2.6,
+                                    () async {
+                                      FocusScope.of(context).unfocus();
+                                      if (emailController.text.isEmpty ||
+                                          passwordController.text.isEmpty)
+                                        validator("All Fields Are Required ");
+                                      else if (!isEmail(emailController.text))
+                                        validator("Email not valid");
+                                      else {
+                                        loading.isLoading(true);
+                                        FocusScope.of(context).unfocus();
+                                        await signinWithEmail(
+                                                emailController.text,
+                                                passwordController.text)
+                                            .then((value) {
+                                          if (value == null) {
+                                            loading.isLoading(false);
+                                          } else {
+                                            loading.isLoading(false);
+
+                                            HapticFeedback.lightImpact();
+                                            Get.offAll(() => MyHomePage(),
+                                                duration:
+                                                    Duration(milliseconds: 500),
+                                                transition:
+                                                    Transition.rightToLeft);
+                                          }
+                                        });
                                       }
-                                    });
-                                  }
-                                },
+                                    },
+                                  ),
+                                  SizedBox(),
+                                ],
                               ),
-                              SizedBox(width: size.width / 25),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Container(
+                                  width: size.width / 2.6,
+                                  alignment: Alignment.center,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: 'Forgot password?',
+                                      style: TextStyle(color: Colors.redAccent),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          emailController.text.isEmpty
+                                              ? Get.snackbar(
+                                                  "Alert",
+                                                  "Please enter your email",
+                                                  snackPosition:
+                                                      SnackPosition.BOTTOM,
+                                                  backgroundColor:
+                                                      Colors.white70,
+                                                )
+                                              : Get.snackbar(
+                                                  "",
+                                                  "Password Reset Link Sent",
+                                                  snackPosition:
+                                                      SnackPosition.BOTTOM,
+                                                  backgroundColor:
+                                                      Colors.white70,
+                                                );
+                                        },
+                                    ),
+                                  ),
+                                ),
+                              ),
                               SizedBox(),
                               RichText(
                                 text: TextSpan(
-                                  text: 'Have Account?',
+                                  text: 'Create a new Account',
                                   style: TextStyle(
                                     color: Colors.blueAccent,
                                     fontSize: 15,
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      Get.off(() => SigninScreen(),
-                                          duration: Duration(milliseconds: 500),
-                                          transition: Transition.rightToLeft);
+                                      FirebaseAuth.instance.currentUser!
+                                          .reload()
+                                          .then((value) {
+                                        if (FirebaseAuth
+                                            .instance.currentUser!.displayName!
+                                            .contains("false")) {
+                                          // Get.off(() => AddModule());//todo
+          Get.off(() => MyHomePage());
+
+                                        } else {
+                                          Get.off(() => SignupScreen(),
+                                              duration:
+                                                  Duration(milliseconds: 500),
+                                              transition:
+                                                  Transition.rightToLeft);
+                                        }
+                                      });
                                     },
                                 ),
                               ),
@@ -211,7 +263,6 @@ class _SignupScreenState extends State<SignupScreen>
       "Alert",
       a!,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.white70,
     );
   }
 
