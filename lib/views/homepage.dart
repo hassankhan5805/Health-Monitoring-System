@@ -5,8 +5,10 @@ import 'package:health_monitoring_system/controllers/loading.dart';
 import 'package:health_monitoring_system/utils/constant/color.dart';
 import 'package:health_monitoring_system/utils/widgets/loading.dart';
 import 'package:health_monitoring_system/views/other_data.dart';
+import 'package:health_monitoring_system/views/welcome.dart';
 
 import '../model/data_model.dart';
+import '../services/auth.dart';
 import '../utils/services.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -73,53 +75,69 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Stack(
       children: [
+        Container(
+          width: devSize.width,
+          height: devSize.height,
+          child: Image.asset(
+            "assets/images/pulse.jpg",
+            fit: BoxFit.cover,
+          ),
+        ),
         Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
             title: Text("Health Monitoring System"),
             centerTitle: true,
             backgroundColor: ColorsRes.darkGreen,
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    signOut();
+                    Get.offAll(WelcomeScreen());
+                  },
+                  icon: Icon(Icons.logout_rounded, color: Colors.white))
+            ],
           ),
           body: Center(
-            child: Container(
-              width: devSize.width,
-              height: devSize.height,
-              // margin: const EdgeInsets.only(top: 60.0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topLeft,
-                  colors: [
-                    Colors.black,
-                    Colors.green,
-                  ],
-                ),
-              ),
-              child: StreamBuilder(
-                stream: _databaseReference!.child("123").onValue,
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        Row(
-                          children: [
-                            rowComponent("Temperature",
-                                "${snapshot.data.snapshot.value["temperature"].toString().split(".").first}"),
-                            rowComponent("Heart Rate",
-                                "${snapshot.data.snapshot.value["heart_rate"]}"),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            rowComponent("Pulse Pattern",
-                                "${snapshot.data.snapshot.value["pulse_pattern"]}"),
-                            rowComponent("Oxygen",
-                                "${snapshot.data.snapshot.value["oxygen"]}"),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            ElevatedButton(
+            child: StreamBuilder(
+              stream: _databaseReference!.child("123").onValue,
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          rowComponent("Temperature",
+                              "${snapshot.data.snapshot.value["temperature"].toString().split(".").first}"),
+                          rowComponent("Heart Rate",
+                              "${snapshot.data.snapshot.value["heart_rate"]}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          // rowComponent("Pulse Pattern",
+                          //     "${snapshot.data.snapshot.value["pulse_pattern"]}"),
+                          rowComponent("Oxygen",
+                              "${snapshot.data.snapshot.value["oxygen"]}"),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(120, 40),
+                              primary: Colors.blueGrey,
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              Get.to(() => OtherData());
+                            },
+                            child: Text("View Data"),
+                          ),
+                          ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 minimumSize: Size(120, 40),
                                 primary: Colors.blueGrey,
@@ -128,77 +146,62 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               onPressed: () {
-                                Get.to(() => OtherData());
+                                setState(() {
+                                  loading.isLoading.value = true;
+                                });
+                                var x = health(
+                                  temp:
+                                      "${snapshot.data.snapshot.value["temperature"].toString().split(".").first}",
+                                  // pulsePattern:
+                                  //     "${snapshot.data.snapshot.value["pulse_pattern"]}",
+                                  heartRate:
+                                      "${snapshot.data.snapshot.value["heart_rate"]}",
+                                  oxygen:
+                                      "${snapshot.data.snapshot.value["oxygen"]}",
+                                  date: DateTime.now().day.toString() +
+                                      "-" +
+                                      DateTime.now().month.toString() +
+                                      "-" +
+                                      DateTime.now().year.toString(),
+                                );
+                                Services().setData(x).then((value) {
+                                  setState(() {
+                                    loading.isLoading.value = false;
+                                  });
+                                });
                               },
-                              child: Text("View Data"),
-                            ),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(120, 40),
-                                  primary: Colors.blueGrey,
-                                  shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    loading.isLoading.value = true;
-                                  });
-                                  var x = health(
-                                    temp:
-                                        "${snapshot.data.snapshot.value["temperature"].toString().split(".").first}",
-                                    pulsePattern:
-                                        "${snapshot.data.snapshot.value["pulse_pattern"]}",
-                                    heartRate:
-                                        "${snapshot.data.snapshot.value["heart_rate"]}",
-                                    oxygen:
-                                        "${snapshot.data.snapshot.value["oxygen"]}",
-                                    date: DateTime.now().day.toString() +
-                                        "-" +
-                                        DateTime.now().month.toString() +
-                                        "-" +
-                                        DateTime.now().year.toString(),
-                                  );
-                                  Services().setData(x).then((value) {
-                                    setState(() {
-                                      loading.isLoading.value = false;
-                                    });
-                                  });
-                                },
-                                child: Text("Upload Data")),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Doctor View",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Switch(
-                                value: doctorView,
-                                onChanged: (a) {
-                                  setState(() {
-                                    doctorView = a;
-                                  });
-                                })
-                          ],
-                        ),
-                        Visibility(
-                          visible: doctorView,
-                          child: rowComponent("Prediction",
-                              "${snapshot.data.snapshot.value["prediction"]}"),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
+                              child: Text("Upload Data")),
+                        ],
+                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     Text(
+                      //       "Doctor View",
+                      //       style: TextStyle(color: Colors.white),
+                      //     ),
+                      //     Switch(
+                      //         value: doctorView,
+                      //         onChanged: (a) {
+                      //           setState(() {
+                      //             doctorView = a;
+                      //           });
+                      //         })
+                      //   ],
+                      // ),
+                      // Visibility(
+                      //   visible: doctorView,
+                      //   child: rowComponent("Prediction",
+                      //       "${snapshot.data.snapshot.value["prediction"]}"),
+                      // ),
+                    ],
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
             ),
           ),
         ),

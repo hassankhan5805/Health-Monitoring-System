@@ -1,3 +1,4 @@
+
 #include <Wire.h>
 #include <MAX30105.h>
 #include <spo2_algorithm.h>
@@ -134,29 +135,29 @@ void setup()
 void loop()
 {
   //---------------------------------------FINGER DETECTION-------------------------------------------
-//  
-//  Serial.print("Startup_IRvalue[");
-//  Serial.print(Startup_IRvalue);
-//  Serial.print("] ");
-//
-//  samples_taken++;
-//  Serial.print("IR[");
-//  Serial.print(sensor.getIR());
-//  Serial.print("] ");
-//
-//  long IR_change = sensor.getIR() - Startup_IRvalue;
-//
-//  Serial.print("IR Change = [");
-//  Serial.print(IR_change);
-//  Serial.print("] ");
-//  delay(1000);
-//
-//  if (IR_change > (long)9000)                                              //
-//  
-// { Serial.print("Finger Detected");
-//    Serial.println();
-//    Serial.print("Spo2 Detection, Please wait...");
-//    Serial.println();
+ 
+ Serial.print("Startup_IRvalue[");
+ Serial.print(Startup_IRvalue);
+ Serial.print("] ");
+
+ samples_taken++;
+ Serial.print("IR[");
+ Serial.print(sensor.getIR());
+ Serial.print("] ");
+
+ long IR_change = sensor.getIR() - Startup_IRvalue;
+
+ Serial.print("IR Change = [");
+ Serial.print(IR_change);
+ Serial.print("] ");
+ delay(1000);
+
+ if (IR_change > (long)9000)                                              //
+ 
+{ Serial.print("Finger Detected");
+   Serial.println();
+   Serial.print("Spo2 Detection, Please wait...");
+   Serial.println();
 
    // once the finger is detected, measure parameters
     spo2_detection();
@@ -182,7 +183,10 @@ void loop()
     Serial.print("Finger Out");
     delay(100);
     Serial.println();
-  }};
+  
+  }
+  
+  }
   // Serial.println();
 
 

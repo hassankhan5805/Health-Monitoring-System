@@ -63,6 +63,7 @@ class WelcomeScreen extends StatelessWidget {
           SizedBox(
             height: 24,
           ),
+          Image.asset("assets/images/doctor_emoji.png"),
           GestureDetector(
             onTap: () {
               Get.to(() => SigninScreen(),

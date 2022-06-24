@@ -22,8 +22,8 @@ class health {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['temperature'] = this.temp;
     data['date'] = this.date;
-    data['heart_rate'] = this.pulsePattern;
-    data['pulse_pattern'] = this.heartRate;
+    data['heart_rate'] = this.heartRate;
+    data['pulse_pattern'] = this.pulsePattern;
     data['oxygen'] = this.oxygen;
     // data['prediction'] = this.prediction;
     return data;

@@ -85,8 +85,8 @@ class OtherData extends StatelessWidget {
                             ),
                             Row(
                               children: [
-                                rowComponent("Pulse Pattern",
-                                    data[index].pulsePattern.toString()),
+                                // rowComponent("Pulse Pattern",
+                                //     data[index].pulsePattern.toString()),
                                 rowComponent(
                                     "Oxygen", data[index].oxygen.toString()),
                               ],

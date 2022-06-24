@@ -96,6 +96,7 @@ class SplashScreenState extends State<SplashScreen> {
           ),
           Center(
             child: Text(
+          
               'Patient data is confidential and will be used only for the purpose of monitoring the patient.',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -106,7 +107,9 @@ class SplashScreenState extends State<SplashScreen> {
           ),
           SizedBox(
             height: 60,
-          )
+          ),
+          Image.asset("assets/images/doctor_emoji.png"),
+
         ],
       ),
     ));
