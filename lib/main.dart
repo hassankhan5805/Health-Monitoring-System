@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:health_monitoring_system/controllers/loading.dart';
+import 'package:health_monitoring_system/utils/constant/color.dart';
 import 'package:health_monitoring_system/views/homepage.dart';
 import 'package:health_monitoring_system/views/welcome.dart';
 import 'views/add_module.dart';
@@ -75,7 +76,7 @@ class SplashScreenState extends State<SplashScreen> {
           end: Alignment.topLeft,
           colors: [
             Colors.black,
-            Colors.green,
+            ColorsRes.purple,
           ],
         ),
       ),
@@ -96,7 +97,6 @@ class SplashScreenState extends State<SplashScreen> {
           ),
           Center(
             child: Text(
-          
               'Patient data is confidential and will be used only for the purpose of monitoring the patient.',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -109,7 +109,6 @@ class SplashScreenState extends State<SplashScreen> {
             height: 60,
           ),
           Image.asset("assets/images/doctor_emoji.png"),
-
         ],
       ),
     ));

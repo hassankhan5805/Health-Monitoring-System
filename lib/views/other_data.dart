@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:health_monitoring_system/utils/constant/color.dart';
 import 'package:health_monitoring_system/utils/services.dart';
 import 'package:health_monitoring_system/utils/widgets/loading.dart';
 
@@ -16,7 +17,7 @@ class OtherData extends StatelessWidget {
       appBar: AppBar(
           elevation: 0,
           centerTitle: true,
-          backgroundColor: Colors.green,
+          backgroundColor: ColorsRes.purple,
           actions: [
             SizedBox(
               width: 8,
@@ -38,7 +39,7 @@ class OtherData extends StatelessWidget {
             end: Alignment.topLeft,
             colors: [
               Colors.black,
-              Colors.green,
+              ColorsRes.purple,
             ],
           ),
         ),
@@ -61,7 +62,7 @@ class OtherData extends StatelessWidget {
                       return GestureDetector(
                         onTap: () {},
                         child: Container(
-                          height: 300,
+                          height: 400,
                           margin:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           padding: EdgeInsets.all(8),
@@ -73,8 +74,20 @@ class OtherData extends StatelessWidget {
                             Row(
                               children: [
                                 rowComponent(
-                                    "Temperature",
+                                    "Name",
                                     data![index]
+                                        .name
+                                        .toString()
+                                        .split(".")
+                                        .first),
+                                rowComponent("ID", data[index].ID.toString()),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                rowComponent(
+                                    "Temperature",
+                                    data[index]
                                         .temp
                                         .toString()
                                         .split(".")
