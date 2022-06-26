@@ -1,4 +1,4 @@
-
+#include <ThingSpeak.h>
 #include <Wire.h>
 #include <MAX30105.h>
 #include <spo2_algorithm.h>
@@ -11,15 +11,18 @@
 
 #define FIREBASE_HOST "health-monitoring-system-0623-default-rtdb.firebaseio.com"       // "YOUR FIREBASE HOST COPIED" //Do not include https:// in FIREBASE_HOST
 #define FIREBASE_AUTH "57Z67US5coolCOKtRwS8mlFbsfBWfLauWXMmvVfa"
-
-#define WIFI_SSID "Khan Pro"
-#define WIFI_PASSWORD "khan5805"
+FirebaseJson json;
+WiFiClient client;
+long mychannelNumber = 1776612;
+const char myWriteAPIKey[]= "JXZ7DXCBWA16D052";
+#define WIFI_SSID "Redmi Note 9S"
+#define WIFI_PASSWORD "abcd1234"
 
 
 // Define Firebase Data Object
 FirebaseData firebaseData;
 
-// Root Path
+//Root Path
 String path = "/123";
 long IR_change;
 
@@ -40,14 +43,14 @@ int32_t spo2;
 int8_t validSPO2;
 int32_t heartRate;
 int8_t validHeartRate;
-
+float Oxygen;
 //------------- variables for heart rate measurement ------------------
 int32_t bufferLength;
 const byte rate_size = 5;
 byte rates[rate_size];
 byte rate_spot = 0;
 long last_beat = 0;
-
+float HR;
 float bpm;
 int beat_avg;
 //------------------ variables for pulse pattren-------------------------
@@ -61,14 +64,14 @@ int beat_avg;
   byte sampleRate;
   int pulseWidth;
   int adcRange;
-
+float T;
   Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-  void TCA9548A(uint8_t bus){
+  /*void TCA9548A(uint8_t bus){
   Wire.beginTransmission(MUX_adress);  // TCA9548A address is 0x70
   Wire.write(1 << bus);          // send byte to select bus
   Wire.endTransmission();
   Serial.print(bus);
-}
+}*/
 
 void setup()
 {
@@ -86,14 +89,14 @@ void setup()
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
+  ThingSpeak.begin(client);
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   Firebase.reconnectWiFi(true);
 
-  //Set database read timeout to 1 minute (max 15 minutes)
+//  Set database read timeout to 1 minute (max 15 minutes)
   Firebase.setReadTimeout(firebaseData, 1000 * 60);
-  //tiny, small, medium, large and unlimited.
+ // tiny, small, medium, large and unlimited.
   //Size and its write timeout e.g. tiny (1s), small (10s), medium (30s) and large (60s).
   Firebase.setwriteSizeLimit(firebaseData, "tiny");
 
@@ -132,61 +135,71 @@ void setup()
   Serial.read();
 }
 
+
 void loop()
 {
   //---------------------------------------FINGER DETECTION-------------------------------------------
- 
- Serial.print("Startup_IRvalue[");
- Serial.print(Startup_IRvalue);
- Serial.print("] ");
+  
+  Serial.print("Startup_IRvalue[");
+  Serial.print(Startup_IRvalue);
+  Serial.print("] ");
 
- samples_taken++;
- Serial.print("IR[");
- Serial.print(sensor.getIR());
- Serial.print("] ");
+  samples_taken++;
+  Serial.print("IR[");
+  Serial.print(sensor.getIR());
+  Serial.print("] ");
 
- long IR_change = sensor.getIR() - Startup_IRvalue;
+  long IR_change = sensor.getIR() - Startup_IRvalue;
 
- Serial.print("IR Change = [");
- Serial.print(IR_change);
- Serial.print("] ");
- delay(1000);
+  Serial.print("IR Change = [");
+  Serial.print(IR_change);
+  Serial.print("] ");
+  delay(1000);
 
- if (IR_change > (long)9000)                                              //
- 
-{ Serial.print("Finger Detected");
-   Serial.println();
-   Serial.print("Spo2 Detection, Please wait...");
-   Serial.println();
+  if (IR_change > (long)9000)                                              //
+  
+   { Serial.print("Finger Detected");
+    Serial.println();
+    Serial.print("Spo2 Detection, Please wait...");
+    Serial.println();
 
    // once the finger is detected, measure parameters
     spo2_detection();
+    json.set("/oxygen",spo2);
+    Firebase.updateNode(firebaseData, "123",json);
+    //Firebase.setString(firebaseData, path + "/oxygen",spo2);
+    if(Oxygen>80 && Oxygen<100){ 
+    ThingSpeak.writeField(mychannelNumber,4,Oxygen, myWriteAPIKey);
+     }
     Serial.println();
-    Serial.print("Heart rate Detection, Please wait...");
-      Firebase.setString(firebaseData, path + "/oxygen",spo2);
+    Serial.print("Heart rate Detection, Please wait..."); 
     Serial.println();
+    delay(8000);
     BPM_detection();
     Serial.println();
-
-    Serial.print("pulse pattren Detection, Please wait...");
-    Serial.println();
-    pulse_pattern();
-    Serial.println();
+    if(HR >40){
+    ThingSpeak.writeField(mychannelNumber, 2 ,HR, myWriteAPIKey);
+    Firebase.setString(firebaseData, path + "/heart_rate",beat_avg);
+    }
+   // Serial.print("pulse pattren Detection, Please wait...");
+    //Serial.println();
+    //pulse_pattern();
+    //Serial.println();
 
     Serial.print("Temperature Detection, Please wait...");
     Serial.println();
     Temp_detection();
     Serial.println();
+    ThingSpeak.writeField(mychannelNumber,1,T, myWriteAPIKey);
+     Firebase.setString(firebaseData, path + "/temperature",mlx.readObjectTempC());
 }
   else
   {
     Serial.print("Finger Out");
     delay(100);
     Serial.println();
-  
   }
-  
-  }
+}
   // Serial.println();
 
 
@@ -263,6 +276,7 @@ void spo2_detection()
 
       Serial.print(F(", SPO2Valid="));
       Serial.println(validSPO2, DEC);
+       Oxygen= spo2;
     }
 
     //After gathering 25 new samples recalculate HR and SP02
@@ -314,9 +328,9 @@ void spo2_detection()
   Serial.print(bpm);
   Serial.print(", Avg BPM=");
   Serial.print(beat_avg); //2
-     Firebase.setString(firebaseData, path + "/heart_rate",beat_avg);
+    
   Serial.println();
-
+HR = beat_avg;
   
   }}}
 
@@ -349,14 +363,14 @@ void spo2_detection()
 for(int i=0;i<500;i++){
 while(i<500 && i>200){
   Serial.println(sensor.getIR()); //Send raw data to plotter // 3
-    Firebase.setString(firebaseData, path + "/pulse_pattern",sensor.getIR());
+   // Firebase.setString(firebaseData, path + "/pulse_pattern",sensor.getIR());
 i++;
     
     
 } }};
 void Temp_detection(){
 
-
+ T= mlx.readObjectTempC();
   mlx.begin(0x5A);
   for(int i=0;i<20;i++) {
   Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempC());
@@ -364,9 +378,12 @@ void Temp_detection(){
   Serial.println("*C");
   Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempF());
   Serial.print("*F\tObject = "); Serial.print(mlx.readObjectTempF());//4; 
-   Firebase.setString(firebaseData, path + "/temperature",mlx.readObjectTempF());
+  
   Serial.println("*F");
 
   Serial.println();
   delay(500);
-}};
+}
+
+
+};

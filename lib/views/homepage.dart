@@ -37,21 +37,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController IDController = TextEditingController();
+  List<double> values = [];
   List<String> predictions = [
     "Fever",
     "Flu Fever",
     "Sore Throat",
     "COVID",
-    "heart infection",
-    "dangue",
-    "malaria",
+    "Heart Infection",
+    "Dangue",
+    "Malaria",
     "Astama",
-    "typhoid",
-    "pnemonia",
-    "syncopi",
-    "anxiety stress",
-    "general pain",
-    "heart attack"
+    "Typhoid",
+    "Pnemonia",
+    "Syncopi",
+    "Anxiety Stress",
+    "General Pain",
+    "Heart Attack"
   ];
   createCollection() {
     // setDataFirstTime("esp_status", "false");
@@ -161,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 var a = jsonDecode(snapshot.data.toString());
 
                                 List<String> list = a['field1'].split(' ');
-                                List<double> values = [];
+                                values.clear();
                                 list.forEach(
                                   (element) {
                                     if (element.trim().isNotEmpty) {
@@ -311,7 +312,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {
                                       loading.isLoading.value = true;
                                     });
+                                    print("Values just before");
+                                    print(values);
+
                                     var x = health(
+                                        predictions: values.toString(),
                                         name: nameController.text,
                                         ID: IDController.text,
                                         temp:
@@ -336,6 +341,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                         loading.isLoading.value = false;
                                       });
                                     });
+                                    nameController.clear();
+                                    IDController.clear();
                                   }
                                 },
                                 child: Text("Upload Data")),

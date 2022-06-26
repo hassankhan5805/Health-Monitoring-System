@@ -1,0 +1,172 @@
+[System]
+Name='Fuzzy_FYP_Project'
+Type='mamdani'
+Version=2.0
+NumInputs=3
+NumOutputs=14
+NumRules=17
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='Saturation'
+Range=[70 100]
+NumMFs=4
+MF1='NN':'trimf',[94 100 100]
+MF2='NL':'trimf',[91 93 95]
+MF3='LN':'trimf',[90 91.5 93.03]
+MF4='LL':'trimf',[70 80 91]
+
+[Input2]
+Name='Temperature'
+Range=[35 42]
+NumMFs=5
+MF1='HH':'trimf',[38.2 40.6 42]
+MF2='HN':'trimf',[37.6 38.1 38.5]
+MF3='NL':'trimf',[35 35.4 35.9]
+MF4='NN':'trimf',[35.8 36.2 36.9]
+MF5='NH':'trimf',[37 37.3 37.9]
+
+[Input3]
+Name='Heart_Rate'
+Range=[40 150]
+NumMFs=5
+MF1='LL':'trimf',[40 50 60]
+MF2='NL':'trimf',[55 60 65]
+MF3='NN':'trimf',[60 80 100]
+MF4='NH':'trimf',[90 100 110]
+MF5='HH':'trimf',[100 125 150]
+
+[Output1]
+Name='Fever'
+Range=[0 1]
+NumMFs=3
+MF1='Low_Fever':'trimf',[-0.5 0 0.5]
+MF2='medium_fever':'trimf',[0 0.5 1]
+MF3='High_Fever':'trimf',[0.5 1 1.5]
+
+[Output2]
+Name='Flu_Fever'
+Range=[0 1]
+NumMFs=3
+MF1='Low_chances':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='medium_chances':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='high_chances':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output3]
+Name='sore_throat'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output4]
+Name='Covid'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output5]
+Name='Heart_Infections'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output6]
+Name='Dangue'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output7]
+Name='Malaria'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output8]
+Name='Asthma'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output9]
+Name='Typhoid'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output10]
+Name='Pnemonia'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output11]
+Name='Syncopi'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='more_likely':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Output12]
+Name='Anxiety,Stress'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.08333 0.5 0.9167]
+MF3='more_likely':'trimf',[0.5833 1 1.417]
+
+[Output13]
+Name='Genral_Pain'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.08333 0.5 0.9167]
+MF3='more_likely':'trimf',[0.5833 1 1.417]
+
+[Output14]
+Name='Heart_Attack'
+Range=[0 1]
+NumMFs=3
+MF1='less_likely':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='likely':'trimf',[0.08333 0.5 0.9167]
+MF3='more_likely':'trimf',[0.5833 1 1.417]
+
+[Rules]
+0 5 0, 1 1 1 0 0 0 0 0 0 0 0 1 1 0 (1) : 1
+0 2 0, 2 2 2 0 0 0 0 0 0 0 0 0 0 0 (1) : 1
+0 1 0, 3 3 3 0 1 1 1 0 1 1 0 0 0 0 (1) : 1
+3 0 1, 0 0 0 0 1 0 0 0 0 0 0 0 0 3 (1) : 1
+2 0 1, 0 0 0 0 0 0 0 0 0 0 0 0 0 3 (1) : 1
+3 1 2, 3 1 0 1 3 1 1 0 1 1 0 0 0 0 (1) : 1
+1 1 1, 3 2 1 2 1 3 2 0 1 1 0 0 0 0 (1) : 1
+1 1 3, 3 2 1 2 1 2 3 0 3 2 0 0 0 0 (1) : 1
+3 2 4, 2 0 0 3 0 0 0 0 0 0 0 0 2 0 (1) : 1
+2 1 3, 3 3 1 0 1 1 1 0 1 3 0 0 0 0 (1) : 1
+4 4 5, 0 0 0 0 0 0 0 3 0 0 0 0 0 0 (1) : 1
+3 4 2, 0 0 0 0 0 0 0 0 0 0 0 1 0 0 (1) : 1
+2 3 5, 0 0 0 0 0 0 0 0 0 0 0 3 0 0 (1) : 1
+1 3 5, 0 0 0 0 0 0 0 0 0 0 0 3 0 0 (1) : 1
+2 4 5, 0 0 0 0 0 0 0 0 0 0 0 3 0 0 (1) : 1
+1 4 5, 0 0 0 0 0 0 0 0 0 0 0 3 0 0 (1) : 1
+3 0 4, 0 0 0 1 0 0 0 0 0 0 0 0 3 0 (1) : 1

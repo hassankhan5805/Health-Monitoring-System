@@ -6,6 +6,7 @@ class health {
   String? date;
   String? name;
   String? ID;
+  String? predictions;
   // String prediction;
 
   health(
@@ -15,6 +16,7 @@ class health {
       this.oxygen,
       this.date,
       this.name,
+      this.predictions,
       this.ID});
 
   health.fromJson(Map<String, dynamic> json) {
@@ -24,8 +26,10 @@ class health {
     name = json['name'] ?? "";
     ID = json['ID'] ?? "";
     heartRate = json['heart_rate'] ?? "";
+    predictions = json['predictions'] ?? "";
     pulsePattern = json['pulse_pattern'] ?? "";
     oxygen = json['oxygen'] ?? "";
+
     // prediction = json['prediction'] ?? "";
   }
 
@@ -34,6 +38,7 @@ class health {
     data['temperature'] = this.temp;
     data['name'] = this.name;
     data['ID'] = this.ID;
+    data['predictions'] = this.predictions;
     data['date'] = this.date;
     data['heart_rate'] = this.heartRate;
     data['pulse_pattern'] = this.pulsePattern;
