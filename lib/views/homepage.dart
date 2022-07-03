@@ -38,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController IDController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
   List<double> values = [];
   List<String> predictions = [
     "Fever",
@@ -273,6 +274,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.all(15),
+                                child: TextField(
+                                  controller: notesController,
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.red,
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Notes',
+                                    hintText: 'Doctor notes on this patient',
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -291,7 +304,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               onPressed: () {
-                                Get.to(() => OtherData(isDoc: true,));
+                                Get.to(() => OtherData(
+                                      isDoc: true,
+                                    ));
                               },
                               child: Text("View Data"),
                             ),
@@ -317,7 +332,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     print(values);
 
                                     var x = health(
-                                      docID: FirebaseAuth.instance.currentUser!.uid,
+                                        notes: notesController.text,
+                                        docID: FirebaseAuth
+                                            .instance.currentUser!.uid,
                                         predictions: values.toString(),
                                         name: nameController.text,
                                         ID: IDController.text,
@@ -368,15 +385,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   tableValue(String value, int index) {
+    if (value == "0.5") value = "0.0";
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: double.parse(value) <= 0.5
+            color: double.parse(value) <= 0.25
                 ? Colors.green
-                : double.parse(value) < 0.65
+                : double.parse(value) < 0.60
                     ? Colors.amber
                     : Colors.red,
             boxShadow: [

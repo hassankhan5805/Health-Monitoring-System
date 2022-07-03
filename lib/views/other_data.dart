@@ -105,7 +105,7 @@ class OtherData extends StatelessWidget {
                       return GestureDetector(
                         onTap: () {},
                         child: Container(
-                          height: 1400,
+                          height: 1560,
                           margin:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           padding: EdgeInsets.all(8),
@@ -148,6 +148,7 @@ class OtherData extends StatelessWidget {
                                     "Oxygen", data[index].oxygen.toString()),
                               ],
                             ),
+                            rowComponent("Notes", data[index].notes.toString()),
                             Column(
                               children: [
                                 tableValue("${values[0]}", 0),
@@ -207,15 +208,16 @@ class OtherData extends StatelessWidget {
   }
 
   tableValue(String value, int index) {
+    if (value == "0.5") value = "0.0";
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: double.parse(value) <= 0.5
+            color: double.parse(value) <= 0.25
                 ? Colors.green
-                : double.parse(value) < 0.65
+                : double.parse(value) < 0.60
                     ? Colors.amber
                     : Colors.red,
             boxShadow: [
@@ -259,7 +261,7 @@ class OtherData extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       height: 90,
-      width: 140,
+      width: s == "Notes" ? 300 : 140,
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 6),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
