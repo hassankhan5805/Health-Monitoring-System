@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:health_monitoring_system/utils/constant/color.dart';
+import 'package:health_monitoring_system/views/authentication/patient_login.dart';
 
 import 'authentication/signin.dart';
 import 'authentication/signup.dart';
@@ -21,17 +22,13 @@ class WelcomeScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topLeft,
-          colors: [
-            Colors.black,
-            Colors.green,
-          ],
+          colors: [Colors.black, ColorsRes.purple],
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 100,
+            height: 70,
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,17 +50,29 @@ class WelcomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2),
               ),
-              
             ],
           ),
-          SizedBox(
-            height: 48,
-          ),
-          
-          SizedBox(
-            height: 24,
-          ),
           Image.asset("assets/images/doctor_emoji.png"),
+          GestureDetector(
+            onTap: () {
+              Get.to(() => PatientSignin(),
+                  duration: Duration(milliseconds: 500),
+                  transition: Transition.rightToLeft);
+            },
+            child: Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width * 0.6,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25), color: Colors.green),
+              child: Center(
+                  child: Text('Patient Sign In',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500))),
+            ),
+          ),
+          SizedBox(height: 24.0),
           GestureDetector(
             onTap: () {
               Get.to(() => SigninScreen(),
@@ -74,10 +83,9 @@ class WelcomeScreen extends StatelessWidget {
               height: 50,
               width: MediaQuery.of(context).size.width * 0.6,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.green),
+                  borderRadius: BorderRadius.circular(25), color: Colors.green),
               child: Center(
-                  child: Text('Sign In',
+                  child: Text('Dotor Sign In',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -99,7 +107,7 @@ class WelcomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(25),
                   color: Colors.white),
               child: Center(
-                  child: Text('Sign Up',
+                  child: Text('Doctor Sign Up',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 16,

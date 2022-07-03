@@ -1,14 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:health_monitoring_system/services/auth.dart';
 import 'package:health_monitoring_system/utils/constant/color.dart';
-import 'package:health_monitoring_system/utils/services.dart';
+import 'package:health_monitoring_system/services/services.dart';
 import 'package:health_monitoring_system/utils/widgets/loading.dart';
+import 'package:health_monitoring_system/views/welcome.dart';
 
 import '../model/data_model.dart';
 
 class OtherData extends StatelessWidget {
-  OtherData({Key? key}) : super(key: key);
+  final isDoc;
+  final patientID;
+  OtherData({Key? key, this.isDoc = false, this.patientID = ""})
+      : super(key: key);
   List<double> values = [];
 
   List<String> predictions = [
@@ -38,9 +44,12 @@ class OtherData extends StatelessWidget {
           centerTitle: true,
           backgroundColor: ColorsRes.purple,
           actions: [
-            SizedBox(
-              width: 8,
-            ),
+            IconButton(
+                onPressed: () {
+                  signOut();
+                  Get.offAll(WelcomeScreen());
+                },
+                icon: Icon(Icons.logout_rounded, color: Colors.white))
           ],
           title: Text('Health Monitoring',
               style: TextStyle(
@@ -63,7 +72,8 @@ class OtherData extends StatelessWidget {
           ),
         ),
         child: StreamBuilder<List<health>>(
-            stream: Services().getData(),
+            stream: Services().getData(
+                filter: true, isDoc: isDoc, id: isDoc ? "" : patientID),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {

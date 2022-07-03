@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +12,7 @@ import 'package:health_monitoring_system/views/welcome.dart';
 
 import '../model/data_model.dart';
 import '../services/auth.dart';
-import '../utils/services.dart';
+import '../services/services.dart';
 import 'package:http/http.dart' as http;
 
 class MyHomePage extends StatefulWidget {
@@ -290,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               onPressed: () {
-                                Get.to(() => OtherData());
+                                Get.to(() => OtherData(isDoc: true,));
                               },
                               child: Text("View Data"),
                             ),
@@ -316,6 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     print(values);
 
                                     var x = health(
+                                      docID: FirebaseAuth.instance.currentUser!.uid,
                                         predictions: values.toString(),
                                         name: nameController.text,
                                         ID: IDController.text,

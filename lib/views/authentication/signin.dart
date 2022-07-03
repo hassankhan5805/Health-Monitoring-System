@@ -96,7 +96,7 @@ class _SigninScreenState extends State<SigninScreen>
                       end: Alignment.bottomRight,
                       colors: [
                         Colors.black,
-                        ColorsRes.primary,
+                        ColorsRes.purple,
                       ],
                     ),
                   ),
